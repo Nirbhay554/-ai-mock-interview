@@ -509,11 +509,11 @@ Output ONLY valid JSON.
     const isRateLimit = err.status === 429 || err.statusCode === 429 || err.message?.includes('429') || err.message?.includes('quota') || err.message?.includes('ResourceExhausted');
     if (isRateLimit) {
       return res.status(429).json({
-        error: 'Gemini API quota/rate limit exceeded. Please wait a moment and try again.',
+        error: 'AI is busy right now. Please wait a moment and try again.',
       });
     }
 
-    res.status(500).json({ error: err.message || 'Failed to process answer' });
+    res.status(500).json({ error: 'Failed to process answer. Please try again.' });
   }
 });
 
