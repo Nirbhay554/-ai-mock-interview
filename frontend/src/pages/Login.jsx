@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import supabase from '../lib/supabase';
 import CardFanCarousel from '../components/CardFanCarousel';
+import CosmicParallaxBg from '../components/CosmicParallaxBg';
 
 // Stylish text-based logo replacing the robot
 const InterviewLogo = ({ text = "INTERVIEW", size = "normal" }) => {
@@ -88,9 +89,22 @@ export default function Login() {
 
   return (
     <div style={styles.page}>
+      {/* Cosmic Parallax background */}
+      <CosmicParallaxBg 
+        head="AI Mock Prep" 
+        text="Real-time Voice Analysis, Custom Track Settings, Aptitude Practice Hub, AI Resume Reviewer" 
+      />
+      
       {/* Centered container scrollable */}
       <div style={styles.scrollWrapper}>
         
+        {/* SPECIALTIES DISPLAYED ABOVE THE LOGIN CARD */}
+        <div style={styles.specialtiesSection}>
+          <h2 style={styles.sidebarTitle}>✨ Our Platform Specialties</h2>
+          <p style={styles.sidebarSubtitle}>Scroll down to access the login panel!</p>
+          <CardFanCarousel cards={specialties} />
+        </div>
+
         {/* LOGIN CONTAINER */}
         <div style={styles.authContainer}>
           <div className="cartoon-card" style={styles.authCard}>
@@ -211,13 +225,6 @@ export default function Login() {
           </div>
         </div>
 
-        {/* SPECIALTIES DISPLAYED BELOW THE LOGIN CARD (SCROLL TO REACH THEM) */}
-        <div style={styles.specialtiesSection}>
-          <h2 style={styles.sidebarTitle}>✨ Our Platform Specialties</h2>
-          <p style={styles.sidebarSubtitle}>Scroll to discover what makes our prep suite amazing!</p>
-          <CardFanCarousel cards={specialties} />
-        </div>
-
       </div>
     </div>
   );
@@ -226,7 +233,7 @@ export default function Login() {
 const styles = {
   page: { 
     minHeight: '100vh', 
-    background: '#ffffff', // Completely white theme
+    background: 'transparent', // Transparent to let cosmic stars background shine through
     color: '#000000',
     overflowY: 'auto'
   },
@@ -341,12 +348,12 @@ const styles = {
     fontFamily: 'var(--font-display)',
     fontSize: '24px',
     fontWeight: '800',
-    color: '#000000',
+    color: '#ffffff', // white text for readability against dark space bg
     marginBottom: '8px'
   },
   sidebarSubtitle: {
     fontSize: '13.5px',
-    color: '#64748b',
+    color: '#94a3b8', // light blue-slate text for readability against dark space bg
     marginBottom: '24px'
   },
   verticalList: {
