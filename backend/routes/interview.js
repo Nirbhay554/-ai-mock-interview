@@ -212,10 +212,11 @@ router.post('/start', authenticate, async (req, res) => {
       const model = genAI.getGenerativeModel({
         model: 'gemini-3.1-flash-lite',
         generationConfig: {
-          responseMimeType: 'application/json'
+          responseMimeType: 'application/json',
+          temperature: 1.0
         }
       });
-      const prompt = buildMcqPrompt(role, diff, totalQuestions);
+      const prompt = `${buildMcqPrompt(role, diff, totalQuestions)}\nEnsure that you generate a unique and diverse set of questions. [Session ID: ${session.id}]`;
 
       let questions = [];
       let lastParsedQuestions = null;
@@ -284,9 +285,10 @@ router.post('/start', authenticate, async (req, res) => {
     // Handle QA Mode
     const model = genAI.getGenerativeModel({
       model: 'gemini-3.1-flash-lite',
-      systemInstruction: buildSystemPrompt(role, diff, totalQuestions),
+      systemInstruction: `${buildSystemPrompt(role, diff, totalQuestions)}\nEnsure that you ask unique and diverse questions. [Session ID: ${session.id}]`,
       generationConfig: {
-        responseMimeType: 'application/json'
+        responseMimeType: 'application/json',
+        temperature: 1.0
       }
     });
 
@@ -406,9 +408,10 @@ router.post('/answer', authenticate, sanitizeInput, async (req, res) => {
     // Send to Gemini with full history
     const model = genAI.getGenerativeModel({
       model: 'gemini-3.1-flash-lite',
-      systemInstruction: buildSystemPrompt(session.role, diff, totalQuestions),
+      systemInstruction: `${buildSystemPrompt(session.role, diff, totalQuestions)}\nEnsure that you ask unique and diverse questions. [Session ID: ${session.id}]`,
       generationConfig: {
-        responseMimeType: 'application/json'
+        responseMimeType: 'application/json',
+        temperature: 1.0
       }
     });
 

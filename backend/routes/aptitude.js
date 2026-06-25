@@ -53,10 +53,12 @@ router.post('/generate', authenticate, async (req, res) => {
     const model = genAI.getGenerativeModel({
       model: 'gemini-3.1-flash-lite',
       generationConfig: {
-        responseMimeType: 'application/json'
+        responseMimeType: 'application/json',
+        temperature: 1.0
       }
     });
 
+    const seed = session_id || Math.random().toString(36).substring(7);
     const systemPrompt = `
 You are an expert aptitude test maker. Create a set of ${questionsCount} multiple-choice questions for the topic: ${topic}.
 Each question must test the candidate's core skills in this area.
@@ -67,6 +69,7 @@ Format the questions as a JSON array of objects. Each object must have:
 - "explanation": A detailed, easy-to-understand explanation of how to solve the problem step-by-step.
 
 Respond ONLY with the JSON array. Do not wrap in markdown or add any other text.
+Ensure that you generate a unique and diverse set of questions. [Session: ${seed}]
 `.trim();
 
     let questions = [];
