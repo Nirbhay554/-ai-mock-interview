@@ -730,5 +730,10 @@ h1, h2, h3, h4, h5 {
   font-size: 18px;
 }
 
+/* Specialties Fan Cards Color */
+.fan-card {
+  background: #e0f2fe !important; /* light morning sky blue color */
+}
+
 
 

@@ -118,10 +118,11 @@ export default function Login() {
       {/* Centered container scrollable */}
       <div style={styles.scrollWrapper}>
         
+        {/* BIG BOLD HEADING */}
+        <h1 style={styles.mainHeading}>AI Mock Interview</h1>
+        
         {/* SPECIALTIES DISPLAYED ABOVE THE LOGIN CARD */}
         <div style={styles.specialtiesSection}>
-          <h2 style={styles.sidebarTitle}>✨ Our Platform Specialties</h2>
-          <p style={styles.sidebarSubtitle}>Scroll down to access the login panel!</p>
           <CardFanCarousel cards={specialties} />
         </div>
 
@@ -277,7 +278,7 @@ const styles = {
     padding: '40px', 
     width: '100%', 
     textAlign: 'center', 
-    background: '#ffffff',
+    background: '#e0f2fe', // light morning sky blue color
     border: '4px solid #000000',
     boxShadow: '8px 8px 0px #000000',
     position: 'relative'
@@ -416,5 +417,16 @@ const styles = {
     zIndex: 100,
     display: 'flex',
     gap: '12px'
+  },
+  mainHeading: {
+    fontFamily: 'var(--font-display)',
+    fontSize: '56px',
+    fontWeight: '900',
+    color: '#ffffff',
+    textAlign: 'center',
+    letterSpacing: '-0.02em',
+    marginBottom: '20px',
+    textShadow: '0 0 20px rgba(255, 255, 255, 0.15), 0 4px 8px rgba(0, 0, 0, 0.5)',
+    textTransform: 'uppercase'
   }
 };
