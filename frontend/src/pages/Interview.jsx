@@ -67,6 +67,7 @@ export default function Interview() {
   const {
     isListening, transcript, isSpeaking,
     startListening, stopListening, speak, stopSpeaking, setTranscript,
+    voiceError,
   } = useVoice();
 
   useEffect(() => {
@@ -88,6 +89,12 @@ export default function Interview() {
       stopSpeaking();
     };
   }, [stage, stopSpeaking]);
+
+  useEffect(() => {
+    if (voiceError) {
+      setError(voiceError);
+    }
+  }, [voiceError]);
 
   const addMessage = (role, content, meta = {}) => {
     setMessages((prev) => [...prev, { role, content, ...meta }]);

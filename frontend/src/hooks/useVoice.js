@@ -4,6 +4,7 @@ const useVoice = () => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voiceError, setVoiceError] = useState('');
   const recognitionRef = useRef(null);
 
   // ── Speech to Text (STT) ──────────────────────────────────────────────────
@@ -25,6 +26,7 @@ const useVoice = () => {
     recognition.onstart = () => {
       setIsListening(true);
       setTranscript('');
+      setVoiceError('');
     };
 
     recognition.onresult = (event) => {
@@ -46,6 +48,18 @@ const useVoice = () => {
     recognition.onerror = (event) => {
       console.error('Speech recognition error:', event.error);
       setIsListening(false);
+      
+      let errMsg = 'Speech recognition error.';
+      if (event.error === 'not-allowed') {
+        errMsg = 'Microphone access denied. Please click the microphone/lock icon in your browser address bar and choose "Allow".';
+      } else if (event.error === 'no-speech') {
+        errMsg = 'No speech was detected. Speak louder or check your mic settings.';
+      } else if (event.error === 'network') {
+        errMsg = 'Network error. Speech recognition requires an active internet connection.';
+      } else {
+        errMsg = `Speech recognition failed: ${event.error}`;
+      }
+      setVoiceError(errMsg);
     };
 
     recognition.onend = () => {
@@ -101,6 +115,7 @@ const useVoice = () => {
     speak,
     stopSpeaking,
     setTranscript,
+    voiceError,
   };
 };
 
