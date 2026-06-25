@@ -90,6 +90,26 @@ No explanation, no markdown formatting like \`\`\`json, no trailing text.
     const responseText = response.response.text();
     const result = cleanJSONResponse(responseText);
 
+    // Upload file to Supabase Storage
+    const fileExtension = req.file.originalname.split('.').pop();
+    const storagePath = `${userId}/${Date.now()}_${req.file.originalname}`;
+    
+    const { data: storageData, error: storageError } = await supabase.storage
+      .from('resumes')
+      .upload(storagePath, req.file.buffer, {
+        contentType: req.file.mimetype,
+        upsert: true
+      });
+
+    if (storageError) {
+      console.error('Storage upload error:', storageError);
+    }
+
+    // Get the public URL of the uploaded file
+    const { data: { publicUrl } } = supabase.storage
+      .from('resumes')
+      .getPublicUrl(storagePath);
+
     // Save evaluation to Supabase
     const { data: dbRecord, error: dbError } = await supabase
       .from('resumes')
@@ -100,6 +120,7 @@ No explanation, no markdown formatting like \`\`\`json, no trailing text.
         strengths: result.strengths,
         weaknesses: result.weaknesses,
         summary: result.summary,
+        file_url: publicUrl,
       })
       .select()
       .single();
