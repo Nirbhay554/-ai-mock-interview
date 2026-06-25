@@ -108,6 +108,7 @@ export default function Interview() {
     try {
       const data = await startInterview(selectedRole, selectedType, selectedDifficulty, selectedQuestions);
       setSessionId(data.session_id);
+      setCelebratedInSession(false);
       
       if (selectedType === 'mcq') {
         setMcqQuestions(data.questions);
@@ -128,6 +129,7 @@ export default function Interview() {
   };
 
   const [celebration, setCelebration] = useState(null); // null or { score, nextAction }
+  const [celebratedInSession, setCelebratedInSession] = useState(false);
 
   // Submit QA Answer
   const handleSubmitQA = async () => {
@@ -167,7 +169,8 @@ export default function Interview() {
       };
 
       // If user scores > 7 on this turn, trigger the Mickey Mouse celebration before showing next question/results
-      if (data.answer_score > 7) {
+      if (data.answer_score > 7 && !celebratedInSession) {
+        setCelebratedInSession(true);
         setCelebration({
           score: data.answer_score,
           nextAction: processNextStep
