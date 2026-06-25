@@ -2,6 +2,7 @@ import { useState } from 'react';
 import supabase from '../lib/supabase';
 import CardFanCarousel from '../components/CardFanCarousel';
 import CosmicParallaxBg from '../components/CosmicParallaxBg';
+import { MetalButton } from '../components/Button';
 
 // Stylish text-based logo replacing the robot
 const InterviewLogo = ({ text = "INTERVIEW", size = "normal" }) => {
@@ -33,6 +34,15 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [loginMethod, setLoginMethod] = useState('google'); // 'google' | 'email'
+
+  const handleScrollToLogin = (isSignUpMode) => {
+    setIsSignUp(isSignUpMode);
+    setLoginMethod('email'); // Default to email form
+    const container = document.getElementById('login-container');
+    if (container) {
+      container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
 
   const handleGoogleLogin = async () => {
     setMessage('');
@@ -89,10 +99,20 @@ export default function Login() {
 
   return (
     <div style={styles.page}>
+      {/* Top Header with Login and Sign Up buttons */}
+      <div style={styles.topHeader}>
+        <MetalButton onClick={() => handleScrollToLogin(false)} variant="default">
+          Login
+        </MetalButton>
+        <MetalButton onClick={() => handleScrollToLogin(true)} variant="gold">
+          Sign Up
+        </MetalButton>
+      </div>
+
       {/* Cosmic Parallax background */}
       <CosmicParallaxBg 
         head="AI Mock Prep" 
-        text="Real-time Voice Analysis, Custom Track Settings, Aptitude Practice Hub, AI Resume Reviewer" 
+        text="" 
       />
       
       {/* Centered container scrollable */}
@@ -106,7 +126,7 @@ export default function Login() {
         </div>
 
         {/* LOGIN CONTAINER */}
-        <div style={styles.authContainer}>
+        <div id="login-container" style={styles.authContainer}>
           <div className="cartoon-card" style={styles.authCard}>
             <div style={styles.logoContainer}>
               <InterviewLogo text="INTERVIEW" size="large" />
@@ -388,5 +408,13 @@ const styles = {
     fontSize: '12.5px',
     lineHeight: '1.5',
     color: '#334155'
+  },
+  topHeader: {
+    position: 'absolute',
+    top: '20px',
+    right: '20px',
+    zIndex: 100,
+    display: 'flex',
+    gap: '12px'
   }
 };

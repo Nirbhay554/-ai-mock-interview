@@ -523,4 +523,212 @@ h1, h2, h3, h4, h5 {
   pointer-events: none;
 }
 
+/* Metal Button Styling */
+.metal-btn-wrapper {
+  position: relative;
+  display: inline-flex;
+  border-radius: 8px;
+  padding: 1.5px;
+  will-change: transform;
+  transform-origin: center center;
+  user-select: none;
+}
+
+/* Outer wrapper gradients */
+.metal-btn-wrapper.variant-default {
+  background: linear-gradient(to bottom, #000000, #A0A0A0);
+}
+.metal-btn-wrapper.variant-primary {
+  background: linear-gradient(to bottom, #000000, #A0A0A0);
+}
+.metal-btn-wrapper.variant-success {
+  background: linear-gradient(to bottom, #005A43, #7CCB9B);
+}
+.metal-btn-wrapper.variant-error {
+  background: linear-gradient(to bottom, #5A0000, #FFAEB0);
+}
+.metal-btn-wrapper.variant-gold {
+  background: linear-gradient(to bottom, #917100, #EAD98F);
+}
+.metal-btn-wrapper.variant-bronze {
+  background: linear-gradient(to bottom, #864813, #E9B486);
+}
+
+/* Inner bevel effect layers */
+.metal-btn-inner {
+  position: absolute;
+  inset: 1.5px;
+  border-radius: 6px;
+  will-change: transform;
+  transform-origin: center center;
+}
+.metal-btn-inner.variant-default {
+  background: linear-gradient(to bottom, #FAFAFA, #3E3E3E 50%, #E5E5E5);
+}
+.metal-btn-inner.variant-primary {
+  background: linear-gradient(to bottom, hsl(var(--primary)), hsl(var(--secondary)) 50%, hsl(var(--bg-deep)));
+}
+.metal-btn-inner.variant-success {
+  background: linear-gradient(to bottom, #E5F8F0, #00352F 50%, #D1F0E6);
+}
+.metal-btn-inner.variant-error {
+  background: linear-gradient(to bottom, #FFDEDE, #680002 50%, #FFE9E9);
+}
+.metal-btn-inner.variant-gold {
+  background: linear-gradient(to bottom, #FFFDDD, #856807 50%, #FFF1B3);
+}
+.metal-btn-inner.variant-bronze {
+  background: linear-gradient(to bottom, #EDC5A1, #5F2D01 50%, #FFDEC1);
+}
+
+/* Actual button tag inside */
+.metal-btn {
+  position: relative;
+  z-index: 10;
+  margin: 1.5px;
+  border-radius: 6px;
+  display: inline-flex;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 8px 24px;
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  will-change: transform;
+  transform-origin: center center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--font-display);
+}
+.metal-btn.variant-default {
+  background: linear-gradient(to bottom, #B9B9B9, #969696);
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgb(80, 80, 80);
+}
+.metal-btn.variant-primary {
+  background: linear-gradient(to bottom, hsl(var(--primary)), hsl(var(--primary)));
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgb(30, 58, 138);
+}
+.metal-btn.variant-success {
+  background: linear-gradient(to bottom, #9ADBC8, #3E8F7C);
+  color: #FFF7F0;
+  text-shadow: 0 -1px 0 rgb(6, 78, 59);
+}
+.metal-btn.variant-error {
+  background: linear-gradient(to bottom, #F08D8F, #A45253);
+  color: #FFF7F0;
+  text-shadow: 0 -1px 0 rgb(146, 64, 14);
+}
+.metal-btn.variant-gold {
+  background: linear-gradient(to bottom, #FFEBA1, #9B873F);
+  color: #FFFDE5;
+  text-shadow: 0 -1px 0 rgb(178, 140, 2);
+}
+.metal-btn.variant-bronze {
+  background: linear-gradient(to bottom, #FFE3C9, #A36F3D);
+  color: #FFF7F0;
+  text-shadow: 0 -1px 0 rgb(124, 45, 18);
+}
+
+/* Shine overlay */
+.metal-btn-shine {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.metal-btn-shine.pressed {
+  opacity: 0.2;
+}
+.shine-bar {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
+}
+
+.metal-btn-overlay {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), transparent);
+  border-radius: 6px;
+}
+
+/* Liquid Button Styles */
+.liquid-btn-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: hsl(var(--primary));
+  transition: transform 0.3s ease;
+  user-select: none;
+}
+.liquid-btn-wrapper:hover {
+  transform: scale(1.05);
+}
+.liquid-btn-glass {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 50px;
+  z-index: 0;
+  box-shadow: 0 0 6px rgba(0,0,0,0.03), 0 2px 6px rgba(0,0,0,0.08), inset 3px 3px 0.5px -3px rgba(0,0,0,0.9), inset -3px -3px 0.5px -3px rgba(0,0,0,0.85), inset 1px 1px 1px -0.5px rgba(0,0,0,0.6), inset -1px -1px 1px -0.5px rgba(0,0,0,0.6), inset 0 0 6px 6px rgba(0,0,0,0.12), inset 0 0 2px 2px rgba(0,0,0,0.06), 0 0 12px rgba(255,255,255,0.15);
+}
+.liquid-btn-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  z-index: -10;
+}
+.liquid-btn-content {
+  position: relative;
+  z-index: 10;
+  pointer-events: none;
+  font-size: 14px;
+}
+.hidden-svg-filter {
+  display: none;
+}
+
+/* Sizing variants for Liquid Button */
+.liquid-btn-wrapper.size-sm .liquid-btn-content {
+  padding: 6px 16px;
+  font-size: 12px;
+}
+.liquid-btn-wrapper.size-default .liquid-btn-content {
+  padding: 10px 24px;
+  font-size: 14px;
+}
+.liquid-btn-wrapper.size-lg .liquid-btn-content {
+  padding: 12px 32px;
+  font-size: 16px;
+}
+.liquid-btn-wrapper.size-xl .liquid-btn-content {
+  padding: 14px 40px;
+  font-size: 18px;
+}
+
+
 
