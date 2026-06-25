@@ -119,7 +119,7 @@ export default function Aptitude() {
             <div style={{ marginBottom: 10 }}>
               <label style={styles.fieldLabel}>2. Number of Questions ({selectedQuestions})</label>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                {[5, 6, 7, 8, 9, 10].map((num) => (
+                {[5, 10].map((num) => (
                   <button
                     key={num}
                     onClick={() => setSelectedQuestions(num)}

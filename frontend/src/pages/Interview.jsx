@@ -47,6 +47,7 @@ export default function Interview() {
   const [selectedType, setSelectedType] = useState('qa'); // qa | mcq
   const [selectedDifficulty, setSelectedDifficulty] = useState('medium'); // easy | medium
   const [selectedQuestions, setSelectedQuestions] = useState(5); // 5 to 10
+  const [latestEvaluation, setLatestEvaluation] = useState(null);
   
   const [sessionId, setSessionId] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -109,6 +110,7 @@ export default function Interview() {
       const data = await startInterview(selectedRole, selectedType, selectedDifficulty, selectedQuestions);
       setSessionId(data.session_id);
       setCelebratedInSession(false);
+      setLatestEvaluation(null);
       
       if (selectedType === 'mcq') {
         setMcqQuestions(data.questions);
@@ -157,6 +159,11 @@ export default function Interview() {
         }
 
         if (data.feedback) {
+          setLatestEvaluation({
+            feedback: data.feedback,
+            score: data.answer_score,
+            questionNumber: questionNumber,
+          });
           addMessage('agent', `Evaluation: ${data.feedback}`, {
             isFeedback: true,
             score: data.answer_score,
@@ -171,6 +178,13 @@ export default function Interview() {
       // If user scores > 7 on this turn, trigger the Mickey Mouse celebration before showing next question/results
       if (data.answer_score > 7 && !celebratedInSession) {
         setCelebratedInSession(true);
+        if (data.feedback) {
+          setLatestEvaluation({
+            feedback: data.feedback,
+            score: data.answer_score,
+            questionNumber: questionNumber,
+          });
+        }
         setCelebration({
           score: data.answer_score,
           nextAction: processNextStep
@@ -312,7 +326,7 @@ export default function Interview() {
             <div style={{ marginBottom: 10 }}>
               <label style={styles.fieldLabel}>4. Number of Questions ({selectedQuestions})</label>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                {[5, 6, 7, 8, 9, 10].map((num) => (
+                {[5, 10].map((num) => (
                   <button
                     key={num}
                     onClick={() => setSelectedQuestions(num)}
@@ -440,7 +454,7 @@ export default function Interview() {
               Dashboard Home
             </button>
             <button
-              onClick={() => { setStage('select'); setMessages([]); setResult(null); }}
+              onClick={() => { setStage('select'); setMessages([]); setResult(null); setLatestEvaluation(null); }}
               className="cartoon-button cartoon-button-outline"
             >
               Practice Again 🔁
@@ -582,182 +596,236 @@ export default function Interview() {
         </span>
       </div>
 
-      {/* Messages */}
-      <div style={styles.messagesContainer}>
-        <div style={styles.messagesInner}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 15 }}>
-            <InterviewLogo text="INTERVIEW" size="large" />
+      <div className="chat-body-split">
+        {/* Sticky Sidebar Panel */}
+        <div className="sidebar-panel-split">
+          <div style={{ textAlign: 'center', marginBottom: 5 }}>
+            <InterviewLogo text="EVALUATION" />
           </div>
-
-          {messages.map((msg, i) => {
-            const isUser = msg.role === 'user';
-            
-            if (msg.isFeedback) {
-              return (
-                <div key={i} className="cartoon-card" style={{ padding: 16, background: 'rgba(6,182,212,0.06)', border: '2px solid #000', boxShadow: '4px 4px 0 #000', alignSelf: 'center', maxWidth: 650, width: '100%' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                    <span style={{ fontWeight: '800', color: 'hsl(var(--secondary))', fontSize: 12, textTransform: 'uppercase' }}>AI Evaluation Feedback</span>
-                    <span className="cartoon-badge" style={{ background: getScoreBadgeColor(msg.score), color: '#000' }}>
-                      Score: {msg.score}/10
-                    </span>
+          {latestEvaluation ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, height: '100%' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+                <div style={{
+                  width: 70,
+                  height: 70,
+                  borderRadius: '50%',
+                  border: '3px solid #000',
+                  background: getScoreBadgeColor(latestEvaluation.score),
+                  boxShadow: '3px 3px 0px #000',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: '800',
+                  fontSize: 22,
+                  color: '#000'
+                }}>
+                  {latestEvaluation.score}
+                </div>
+                <div style={{ textAlign: 'left' }}>
+                  <div style={{ fontSize: 13, fontWeight: '800', color: 'hsl(var(--secondary))', textTransform: 'uppercase' }}>
+                    Latest Score
                   </div>
-                  <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.5, color: 'hsl(var(--text-muted))' }}>{msg.content}</p>
+                  <div style={{ fontSize: 12, color: 'hsl(var(--text-muted))' }}>
+                    Question {latestEvaluation.questionNumber} of {selectedQuestions}
+                  </div>
                 </div>
-              );
-            }
-
-            return (
-              <div
-                key={i}
-                style={{
-                  ...styles.bubbleWrapper,
-                  justifyContent: isUser ? 'flex-end' : 'flex-start',
-                }}
-              >
-                {!isUser && (
-                  <div style={{ ...styles.avatarMini, border: '2px solid #000', background: 'hsl(var(--secondary))', color: '#000', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' }}>AI</div>
-                )}
-                <div
-                  className="cartoon-card"
-                  style={{
-                    maxWidth: '75%',
-                    padding: '12px 18px',
-                    borderRadius: 16,
-                    border: '2.5px solid #000000',
-                    boxShadow: isUser ? '3px 3px 0px hsl(var(--primary))' : '3px 3px 0px #000000',
-                    background: isUser ? 'hsl(var(--bg-card-light))' : 'hsl(var(--bg-card))',
-                    borderTopLeftRadius: !isUser ? 2 : 16,
-                    borderTopRightRadius: isUser ? 2 : 16,
-                  }}
-                >
-                  <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6 }}>{msg.content}</p>
-                  {msg.isVoice && (
-                    <span style={styles.voiceIndicator}>🎤 Spoken Answer</span>
-                  )}
-                </div>
-                {isUser && user?.user_metadata?.avatar_url ? (
-                  <img src={user.user_metadata.avatar_url} alt="U" style={{ ...styles.avatarMiniUser, border: '2px solid #000' }} />
-                ) : isUser ? (
-                  <div style={{ ...styles.avatarMiniUserPlaceholder, border: '2px solid #000' }}>U</div>
-                ) : null}
               </div>
-            );
-          })}
-          {isLoading && (
-            <div style={styles.bubbleWrapper}>
-              <div style={{ ...styles.avatarMini, border: '2px solid #000', background: 'hsl(var(--secondary))', color: '#000', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' }}>AI</div>
-              <div className="cartoon-card" style={{ padding: '12px 18px', background: 'hsl(var(--bg-card))', color: 'hsl(var(--text-muted))', border: '2px solid #000', boxShadow: '2px 2px 0px #000' }}>
-                <span className="float-effect" style={{ display: 'inline-block' }}>Thinking... 🧠</span>
+              <div className="cartoon-card" style={{ padding: 14, background: 'hsl(var(--bg-card-light))', flex: 1, overflowY: 'auto', border: '2px solid #000', boxShadow: '2px 2px 0px #000', margin: 0 }}>
+                <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.5, color: '#000000' }}>
+                  {latestEvaluation.feedback}
+                </p>
               </div>
             </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', textAlign: 'center', padding: '20px 10px', color: 'hsl(var(--text-muted))' }}>
+              <span style={{ fontSize: 40, marginBottom: 12 }}>💬</span>
+              <p style={{ fontSize: 13.5, lineHeight: 1.5, margin: 0 }}>
+                Real-time AI score & feedback will appear here as soon as you submit your first answer.
+              </p>
+            </div>
           )}
-          <div ref={bottomRef} />
         </div>
-      </div>
 
-      {error && (
-        <div style={styles.errorBanner}>
-          <span>⚠️ {error}</span>
-        </div>
-      )}
-
-      {/* Input Area */}
-      <div style={{ ...styles.inputArea, background: 'hsl(var(--bg-card))', borderTop: '3px solid #000' }}>
-        <div style={styles.inputAreaContainer}>
-          <div style={styles.modeToggle}>
-            <button
-              onClick={() => { setInputMode('text'); stopListening(); }}
-              className="cartoon-button"
-              style={{
-                padding: '6px 12px',
-                fontSize: 12,
-                background: inputMode === 'text' ? 'hsl(var(--secondary))' : 'hsl(var(--bg-card-light))',
-                color: '#000000'
-              }}
-            >
-              ⌨️ Type Answer
-            </button>
-            <button
-              onClick={() => { setInputMode('voice'); setInputText(''); }}
-              className="cartoon-button"
-              style={{
-                padding: '6px 12px',
-                fontSize: 12,
-                background: inputMode === 'voice' ? 'hsl(var(--secondary))' : 'hsl(var(--bg-card-light))',
-                color: '#000000'
-              }}
-            >
-              🎤 Speak Answer
-            </button>
-          </div>
-
-          <div style={styles.inputRow}>
-            {inputMode === 'voice' ? (
-              <button
-                onClick={handleVoiceToggle}
-                className="cartoon-button"
-                style={{
-                  background: isListening ? 'hsl(var(--danger))' : 'hsl(var(--primary))',
-                  color: '#fff',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                {isListening ? '🔴 Stop Listening' : '🎤 Speak Now'}
-              </button>
-            ) : null}
-
-            {isListening && (
-              <div style={styles.visualizerBlock}>
-                <div className="visualizer-container" style={{ gap: 4 }}>
-                  <div className="voice-wave-bar" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="voice-wave-bar" style={{ animationDelay: '0.3s' }}></div>
-                  <div className="voice-wave-bar" style={{ animationDelay: '0.5s' }}></div>
-                  <div className="voice-wave-bar" style={{ animationDelay: '0.2s' }}></div>
-                  <div className="voice-wave-bar" style={{ animationDelay: '0.4s' }}></div>
-                </div>
+        {/* Right Chat Panel */}
+        <div className="chat-panel-split">
+          {/* Messages */}
+          <div style={{ ...styles.messagesContainer, width: '100%' }}>
+            <div style={styles.messagesInner}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 15 }}>
+                <InterviewLogo text="INTERVIEW" size="large" />
               </div>
-            )}
 
-            <textarea
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSubmitQA();
+              {messages.map((msg, i) => {
+                const isUser = msg.role === 'user';
+                
+                if (msg.isFeedback) {
+                  return (
+                    <div key={i} className="cartoon-card" style={{ padding: 16, background: 'rgba(6,182,212,0.06)', border: '2px solid #000', boxShadow: '4px 4px 0 #000', alignSelf: 'center', maxWidth: 650, width: '100%' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                        <span style={{ fontWeight: '800', color: 'hsl(var(--secondary))', fontSize: 12, textTransform: 'uppercase' }}>AI Evaluation Feedback</span>
+                        <span className="cartoon-badge" style={{ background: getScoreBadgeColor(msg.score), color: '#000' }}>
+                          Score: {msg.score}/10
+                        </span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.5, color: 'hsl(var(--text-muted))' }}>{msg.content}</p>
+                    </div>
+                  );
                 }
-              }}
-              placeholder={
-                inputMode === 'voice'
-                  ? isListening ? 'Listening... Speak now!' : 'Click Speak, answer, then click Send.'
-                  : 'Type your answer... (Press Enter to send)'
-              }
-              className="cartoon-input"
-              style={{ flex: 1, height: 48, resize: 'none', lineHeight: '20px' }}
-              disabled={isLoading || isListening}
-            />
 
-            <button
-              onClick={handleSubmitQA}
-              disabled={!inputText.trim() || isLoading || isListening}
-              className="cartoon-button cartoon-button-primary"
-              style={{ height: 48, padding: '0 20px' }}
-            >
-              Send Answer 🚀
-            </button>
+                return (
+                  <div
+                    key={i}
+                    style={{
+                      ...styles.bubbleWrapper,
+                      justifyContent: isUser ? 'flex-end' : 'flex-start',
+                    }}
+                  >
+                    {!isUser && (
+                      <div style={{ ...styles.avatarMini, border: '2px solid #000', background: 'hsl(var(--secondary))', color: '#000', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' }}>AI</div>
+                    )}
+                    <div
+                      className="cartoon-card"
+                      style={{
+                        maxWidth: '75%',
+                        padding: '12px 18px',
+                        borderRadius: 16,
+                        border: '2.5px solid #000000',
+                        boxShadow: isUser ? '3px 3px 0px hsl(var(--primary))' : '3px 3px 0px #000000',
+                        background: isUser ? 'hsl(var(--bg-card-light))' : 'hsl(var(--bg-card))',
+                        borderTopLeftRadius: !isUser ? 2 : 16,
+                        borderTopRightRadius: isUser ? 2 : 16,
+                      }}
+                    >
+                      <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6 }}>{msg.content}</p>
+                      {msg.isVoice && (
+                        <span style={styles.voiceIndicator}>🎤 Spoken Answer</span>
+                      )}
+                    </div>
+                    {isUser && user?.user_metadata?.avatar_url ? (
+                      <img src={user.user_metadata.avatar_url} alt="U" style={{ ...styles.avatarMiniUser, border: '2px solid #000' }} />
+                    ) : isUser ? (
+                      <div style={{ ...styles.avatarMiniUserPlaceholder, border: '2px solid #000' }}>U</div>
+                    ) : null}
+                  </div>
+                );
+              })}
+              {isLoading && (
+                <div style={styles.bubbleWrapper}>
+                  <div style={{ ...styles.avatarMini, border: '2px solid #000', background: 'hsl(var(--secondary))', color: '#000', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' }}>AI</div>
+                  <div className="cartoon-card" style={{ padding: '12px 18px', background: 'hsl(var(--bg-card))', color: 'hsl(var(--text-muted))', border: '2px solid #000', boxShadow: '2px 2px 0px #000' }}>
+                    <span className="float-effect" style={{ display: 'inline-block' }}>Thinking... 🧠</span>
+                  </div>
+                </div>
+              )}
+              <div ref={bottomRef} />
+            </div>
           </div>
 
-          <div style={styles.inputFooter}>
-            {isSpeaking && (
-              <span style={{ color: 'hsl(var(--secondary))', fontWeight: 'bold' }}>
-                🔊 Speaker active... Listening for completion
-              </span>
-            )}
-            {!isSpeaking && !isListening && (
-              <span style={{ color: 'hsl(var(--text-muted))' }}>
-                Send your answer when ready
-              </span>
-            )}
+          {error && (
+            <div style={styles.errorBanner}>
+              <span>⚠️ {error}</span>
+            </div>
+          )}
+
+          {/* Input Area */}
+          <div style={{ ...styles.inputArea, background: 'hsl(var(--bg-card))', borderTop: '3px solid #000', width: '100%' }}>
+            <div style={styles.inputAreaContainer}>
+              <div style={styles.modeToggle}>
+                <button
+                  onClick={() => { setInputMode('text'); stopListening(); }}
+                  className="cartoon-button"
+                  style={{
+                    padding: '6px 12px',
+                    fontSize: 12,
+                    background: inputMode === 'text' ? 'hsl(var(--secondary))' : 'hsl(var(--bg-card-light))',
+                    color: '#000000'
+                  }}
+                >
+                  ⌨️ Type Answer
+                </button>
+                <button
+                  onClick={() => { setInputMode('voice'); setInputText(''); }}
+                  className="cartoon-button"
+                  style={{
+                    padding: '6px 12px',
+                    fontSize: 12,
+                    background: inputMode === 'voice' ? 'hsl(var(--secondary))' : 'hsl(var(--bg-card-light))',
+                    color: '#000000'
+                  }}
+                >
+                  🎤 Speak Answer
+                </button>
+              </div>
+
+              <div style={styles.inputRow}>
+                {inputMode === 'voice' ? (
+                  <button
+                    onClick={handleVoiceToggle}
+                    className="cartoon-button"
+                    style={{
+                      background: isListening ? 'hsl(var(--danger))' : 'hsl(var(--primary))',
+                      color: '#fff',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {isListening ? '🔴 Stop Listening' : '🎤 Speak Now'}
+                  </button>
+                ) : null}
+
+                {isListening && (
+                  <div style={styles.visualizerBlock}>
+                    <div className="visualizer-container" style={{ gap: 4 }}>
+                      <div className="voice-wave-bar" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="voice-wave-bar" style={{ animationDelay: '0.3s' }}></div>
+                      <div className="voice-wave-bar" style={{ animationDelay: '0.5s' }}></div>
+                      <div className="voice-wave-bar" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="voice-wave-bar" style={{ animationDelay: '0.4s' }}></div>
+                    </div>
+                  </div>
+                )}
+
+                <textarea
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmitQA();
+                    }
+                  }}
+                  placeholder={
+                    inputMode === 'voice'
+                      ? isListening ? 'Listening... Speak now!' : 'Click Speak, answer, then click Send.'
+                      : 'Type your answer... (Press Enter to send)'
+                  }
+                  className="cartoon-input"
+                  style={{ flex: 1, height: 48, resize: 'none', lineHeight: '20px' }}
+                  disabled={isLoading || isListening}
+                />
+
+                <button
+                  onClick={handleSubmitQA}
+                  disabled={!inputText.trim() || isLoading || isListening}
+                  className="cartoon-button cartoon-button-primary"
+                  style={{ height: 48, padding: '0 20px' }}
+                >
+                  Send Answer 🚀
+                </button>
+              </div>
+
+              <div style={styles.inputFooter}>
+                {isSpeaking && (
+                  <span style={{ color: 'hsl(var(--secondary))', fontWeight: 'bold' }}>
+                    🔊 Speaker active... Listening for completion
+                  </span>
+                )}
+                {!isSpeaking && !isListening && (
+                  <span style={{ color: 'hsl(var(--text-muted))' }}>
+                    Send your answer when ready
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

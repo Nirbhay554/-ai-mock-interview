@@ -744,5 +744,47 @@ h1, h2, h3, h4, h5 {
   --text-muted: 215 15% 35%;
 }
 
+/* Split layout classes for sticky AI Evaluation */
+.chat-body-split {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100vh - 68px);
+}
 
+.sidebar-panel-split {
+  width: 340px;
+  border-right: 3px solid #000000;
+  background: hsl(var(--bg-card)) !important;
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: #000000;
+  flex-shrink: 0;
+}
 
+.chat-panel-split {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Responsive stack for mobile/tablets */
+@media (max-width: 768px) {
+  .chat-body-split {
+    flex-direction: column;
+  }
+  .sidebar-panel-split {
+    width: 100%;
+    max-height: 180px;
+    border-right: none;
+    border-bottom: 3px solid #000000;
+    padding: 12px 16px;
+    gap: 8px;
+  }
+}
