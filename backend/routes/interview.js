@@ -302,7 +302,7 @@ router.post('/start', authenticate, async (req, res) => {
       session_id: session.id,
       role: 'agent',
       content: parsed.question,
-      question_number: parsed.question_number,
+      question_number: 1,
     });
 
     res.json({
@@ -312,7 +312,7 @@ router.post('/start', authenticate, async (req, res) => {
       difficulty: diff,
       total_questions: totalQuestions,
       question: parsed.question,
-      question_number: parsed.question_number,
+      question_number: 1,
       feedback: null,
       answer_score: null,
     });
@@ -488,20 +488,21 @@ Output ONLY valid JSON.
     }
 
     // ── Next question ──
+    const nextQuestionNumber = questionCount + 1;
     await supabase.from('messages').insert({
       session_id,
       role: 'agent',
       content: parsed.question,
       feedback: parsed.feedback,
       answer_score: parsed.answer_score,
-      question_number: parsed.question_number,
+      question_number: nextQuestionNumber,
     });
 
     res.json({
       question: parsed.question,
       feedback: parsed.feedback,
       answer_score: parsed.answer_score,
-      question_number: parsed.question_number,
+      question_number: nextQuestionNumber,
     });
   } catch (err) {
     console.error('Answer error:', err);
