@@ -8,6 +8,7 @@ const CosmicParallaxBg = ({
   text,
   loop = true,
   className = '',
+  starsOnly = false,
 }) => {
   const [smallStars, setSmallStars] = useState('');
   const [mediumStars, setMediumStars] = useState('');
@@ -62,14 +63,18 @@ const CosmicParallaxBg = ({
       ></div>
       
       {/* Horizon and Earth */}
-      <div id="horizon">
-        <div className="glow"></div>
-      </div>
-      <div id="earth"></div>
+      {!starsOnly && (
+        <>
+          <div id="horizon">
+            <div className="glow"></div>
+          </div>
+          <div id="earth"></div>
+        </>
+      )}
       
       {/* Title and subtitle */}
-      {head && <div id="title">{head.toUpperCase()}</div>}
-      {text && (
+      {!starsOnly && head && <div id="title">{head.toUpperCase()}</div>}
+      {!starsOnly && text && (
         <div id="subtitle">
           {textParts.map((part, index) => (
             <React.Fragment key={index}>

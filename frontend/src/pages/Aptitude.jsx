@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { startInterview, generateAptitude, submitMcqAnswers } from '../lib/api';
 import InterviewLogo from '../components/InterviewLogo';
+import CosmicParallaxBg from '../components/CosmicParallaxBg';
 
 const TOPICS = [
   { name: 'Quantitative', icon: '🔢', desc: 'Averages, percentages, ratios, probability, interest, and arithmetic.' },
@@ -77,6 +78,7 @@ export default function Aptitude() {
   if (stage === 'select') {
     return (
       <div style={styles.center}>
+        <CosmicParallaxBg starsOnly={true} />
         <div style={styles.selectContainer}>
           <div style={{ marginBottom: 16 }}>
             <InterviewLogo text="INTERVIEW" size="large" />
@@ -163,6 +165,7 @@ export default function Aptitude() {
   if (stage === 'result') {
     return (
       <div style={styles.center}>
+        <CosmicParallaxBg starsOnly={true} />
         <div style={{ ...styles.resultContainer, border: '3px solid #000000', background: 'hsl(var(--bg-card))', boxShadow: '8px 8px 0px #000' }} className="cartoon-card">
           <div style={{ marginBottom: 16 }}>
             <InterviewLogo text={result.overall_score >= 6 ? "EXCELLENT" : "RESULTS"} size="large" />
@@ -254,11 +257,12 @@ export default function Aptitude() {
 
   // ─── RENDER: Test Exam Screen ──────────────────────────────────────────────
   const currentQ = questions[currentIndex];
-  if (!currentQ) return <div style={styles.center}>Loading Aptitude Test...</div>;
+  if (!currentQ) return <div style={styles.center}><CosmicParallaxBg starsOnly={true} />Loading Aptitude Test...</div>;
   const selectedOption = answers[currentIndex + 1];
 
   return (
     <div style={styles.chatWrapper}>
+      <CosmicParallaxBg starsOnly={true} />
       {/* Header */}
       <div style={{ ...styles.chatHeader, background: 'hsl(var(--bg-card))', borderBottom: '3px solid #000' }}>
         <div style={styles.chatHeaderLeft}>
@@ -365,7 +369,8 @@ const styles = {
     justifyContent: 'center', 
     minHeight: '100vh', 
     padding: 24, 
-    color: '#000000' 
+    color: 'hsl(var(--text-main))',
+    background: 'transparent'
   },
   selectContainer: {
     maxWidth: 750,
@@ -475,7 +480,7 @@ const styles = {
     lineHeight: 1.4
   },
 
-  chatWrapper: { display: 'flex', flexDirection: 'column', height: '100vh', background: 'hsl(var(--bg-deep))', color: '#000000' },
+  chatWrapper: { display: 'flex', flexDirection: 'column', height: '100vh', background: 'transparent', color: 'hsl(var(--text-main))' },
   chatHeader: { 
     display: 'flex', 
     justifyContent: 'space-between', 

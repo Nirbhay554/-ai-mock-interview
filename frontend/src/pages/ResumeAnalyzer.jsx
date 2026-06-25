@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { rateResume, getResumeHistory } from '../lib/api';
 import InterviewLogo from '../components/InterviewLogo';
+import CosmicParallaxBg from '../components/CosmicParallaxBg';
 
 // CuteRobot component removed
 
@@ -87,6 +88,7 @@ export default function ResumeAnalyzer() {
 
   return (
     <div style={styles.center}>
+      <CosmicParallaxBg starsOnly={true} />
       <div style={styles.container}>
         
         {/* Stage 1: Uploading / Scanning */}
@@ -295,7 +297,8 @@ const styles = {
     justifyContent: 'center',
     minHeight: '100vh',
     padding: '24px 16px',
-    color: '#000000'
+    color: 'hsl(var(--text-main))',
+    background: 'transparent'
   },
   container: {
     maxWidth: 750,

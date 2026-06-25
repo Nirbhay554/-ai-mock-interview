@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getSessions } from '../lib/api';
 import supabase from '../lib/supabase';
+import CosmicParallaxBg from '../components/CosmicParallaxBg';
 
 // Stylish text logo replacing the robot logo
 const InterviewLogo = ({ text = "INTERVIEW", size = "normal" }) => {
@@ -69,8 +70,9 @@ export default function Dashboard() {
 
   return (
     <div style={styles.page}>
+      <CosmicParallaxBg starsOnly={true} />
       {/* Header */}
-      <div style={{ ...styles.header, borderBottom: '3px solid #000000', background: 'hsl(var(--bg-card))' }}>
+      <div className="cartoon-header" style={{ ...styles.header, borderBottom: '3px solid #000000', background: 'hsl(var(--bg-card))' }}>
         <div style={styles.headerContainer}>
           <div style={styles.brand} onClick={() => navigate('/')}>
             <InterviewLogo text="INTERVIEW" />
@@ -98,9 +100,9 @@ export default function Dashboard() {
 
       <div style={styles.content}>
         {/* Welcome Banner */}
-        <div className="cartoon-card float-effect-reverse" style={{ display: 'flex', alignItems: 'center', gap: 20, padding: 20, background: 'rgba(129, 140, 248, 0.05)', border: '3px solid #000', boxShadow: '6px 6px 0px #000', marginBottom: 40, flexWrap: 'wrap' }}>
+        <div className="cartoon-card float-effect-reverse" style={{ display: 'flex', alignItems: 'center', gap: 20, padding: 20, border: '3px solid #000', boxShadow: '6px 6px 0px #000', marginBottom: 40, flexWrap: 'wrap' }}>
           <div style={{ flex: 1, minWidth: 260 }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 20, color: '#000', marginBottom: 4 }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 20, color: 'hsl(var(--text-main))', marginBottom: 4 }}>
               Hello, {user?.user_metadata?.full_name?.split(' ')[0] || 'Prep Buddy'}! 👋
             </h2>
             <p style={{ color: 'hsl(var(--text-muted))', fontSize: 14 }}>
@@ -302,7 +304,7 @@ export default function Dashboard() {
 }
 
 const styles = {
-  page: { minHeight: '100vh', background: 'hsl(var(--bg-deep))', color: '#000000' },
+  page: { minHeight: '100vh', background: 'transparent', color: 'hsl(var(--text-main))' },
   header: { 
     position: 'sticky', 
     top: 0, 
@@ -359,7 +361,7 @@ const styles = {
     fontSize: 20,
     fontWeight: '800',
     marginBottom: 20,
-    color: '#000000',
+    color: 'hsl(var(--text-main))',
     fontFamily: 'var(--font-display)'
   },
   

@@ -4,10 +4,10 @@
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-display: 'Space Grotesk', sans-serif;
 
-  /* Completely White Theme Color Palette */
-  --bg-deep: 0 0% 100%;        /* Plain White background */
-  --bg-card: 0 0% 100%;        /* Plain White cards */
-  --bg-card-light: 0 0% 98%;   /* Barely tinted light-grey background */
+  /* Morning Sky & Dark Cosmic Theme Color Palette */
+  --bg-deep: 224 47% 7%;        /* Dark space background color (#060814) */
+  --bg-card: 200 96% 94%;       /* Light morning sky blue color (#e0f2fe) */
+  --bg-card-light: 200 96% 94%;  /* Unified morning sky blue (#e0f2fe) */
   
   --primary: 262 95% 66%;      /* Electric Violet accent */
   --secondary: 187 100% 48%;    /* Neon Cyan accent */
@@ -16,8 +16,8 @@
   --warning: 43 100% 50%;      /* Bright Gold */
   --danger: 355 95% 55%;       /* Crimson Red */
   
-  --text-main: 0 0% 0%;        /* Pitch Black text */
-  --text-muted: 215 15% 40%;   /* Slate Grey text */
+  --text-main: 0 0% 100%;       /* Pure White text for dark page bg */
+  --text-muted: 215 25% 75%;    /* Soft silver/grey for muted page text */
   --border-thick: 3px solid #000000;
 }
 
@@ -54,7 +54,7 @@ body {
 
 /* Neo-Brutalism Cartoon styles (Stark Black borders on White) */
 .cartoon-card {
-  background: #ffffff;
+  background: hsl(var(--bg-card)) !important;
   border: 3px solid #000000;
   border-radius: 16px;
   box-shadow: 6px 6px 0px #000000;
@@ -62,6 +62,8 @@ body {
   position: relative;
   overflow: hidden;
   color: #000000;
+  --text-main: 0 0% 0%;
+  --text-muted: 215 15% 30%;
 }
 
 .cartoon-card:hover {
@@ -185,7 +187,7 @@ body {
 /* Speech Bubble */
 .speech-bubble {
   position: relative;
-  background: #ffffff;
+  background: hsl(var(--bg-card));
   border: 3px solid #000000;
   color: #000000;
   border-radius: 16px;
@@ -199,7 +201,7 @@ body {
   left: 30px;
   border-width: 15px 15px 0;
   border-style: solid;
-  border-color: #ffffff transparent;
+  border-color: hsl(var(--bg-card)) transparent;
   display: block;
   width: 0;
 }
@@ -239,7 +241,7 @@ h1, h2, h3, h4, h5 {
   font-family: var(--font-display);
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: #000000;
+  color: hsl(var(--text-main));
 }
 
 /* Overlay for Mickey Mouse Celebration */
@@ -266,7 +268,7 @@ h1, h2, h3, h4, h5 {
 
 .mickey-bubble {
   position: relative;
-  background: #ffffff;
+  background: hsl(var(--bg-card));
   border: 4px solid #000000;
   border-radius: 24px;
   padding: 24px 32px;
@@ -290,7 +292,7 @@ h1, h2, h3, h4, h5 {
   transform: translateX(-50%);
   border-width: 20px 20px 0;
   border-style: solid;
-  border-color: #ffffff transparent;
+  border-color: hsl(var(--bg-card)) transparent;
   display: block;
   width: 0;
 }
@@ -339,7 +341,7 @@ h1, h2, h3, h4, h5 {
   position: absolute;
   width: 230px;
   height: 280px;
-  background: #ffffff;
+  background: hsl(var(--bg-card));
   border: 4px solid #000000 !important;
   border-radius: 20px !important;
   box-shadow: 6px 6px 0px #000000 !important;
@@ -389,7 +391,7 @@ h1, h2, h3, h4, h5 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ffffff;
+  background: hsl(var(--bg-card));
   border: 3px solid #000000;
   box-shadow: 3px 3px 0px #000000;
   cursor: pointer;
@@ -733,6 +735,13 @@ h1, h2, h3, h4, h5 {
 /* Specialties Fan Cards Color */
 .fan-card {
   background: #e0f2fe !important; /* light morning sky blue color */
+}
+
+/* Header Text Scoped Overrides */
+.cartoon-header {
+  color: #000000 !important;
+  --text-main: 0 0% 0%;
+  --text-muted: 215 15% 35%;
 }
 
 

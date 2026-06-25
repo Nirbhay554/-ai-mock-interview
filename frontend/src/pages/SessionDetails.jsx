@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getSession } from '../lib/api';
 import supabase from '../lib/supabase';
+import CosmicParallaxBg from '../components/CosmicParallaxBg';
 
 // Mascot definitions removed
 
@@ -42,6 +43,7 @@ export default function SessionDetails() {
   if (loading) {
     return (
       <div style={styles.center}>
+        <CosmicParallaxBg starsOnly={true} />
         <div style={{ width: 36, height: 36, border: '4px solid #000', borderTop: '4px solid hsl(var(--primary))', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
         <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
         <p style={{ marginTop: 16, color: 'hsl(var(--text-muted))' }}>Loading session details...</p>
@@ -52,6 +54,7 @@ export default function SessionDetails() {
   if (error || !session) {
     return (
       <div style={styles.center}>
+        <CosmicParallaxBg starsOnly={true} />
         <h2 style={{ color: 'hsl(var(--danger))', marginBottom: 12 }}>Error</h2>
         <p style={{ color: 'hsl(var(--text-muted))', marginBottom: 24 }}>{error || 'Session not found'}</p>
         <button onClick={() => navigate('/dashboard')} className="cartoon-button cartoon-button-primary">
@@ -129,8 +132,9 @@ export default function SessionDetails() {
 
   return (
     <div style={styles.page}>
+      <CosmicParallaxBg starsOnly={true} />
       {/* Top Header */}
-      <div style={{ ...styles.header, borderBottom: '3px solid #000', background: 'hsl(var(--bg-card))' }}>
+      <div className="cartoon-header" style={{ ...styles.header, borderBottom: '3px solid #000', background: 'hsl(var(--bg-card))' }}>
         <button onClick={() => navigate('/dashboard')} className="cartoon-button" style={{ padding: '6px 14px', fontSize: 13, background: 'hsl(var(--primary))', color: '#fff' }}>
           ← Dashboard
         </button>
@@ -305,8 +309,8 @@ export default function SessionDetails() {
 }
 
 const styles = {
-  page: { minHeight: '100vh', background: 'hsl(var(--bg-deep))', color: '#000000' },
-  center: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'hsl(var(--bg-deep))', color: '#000000' },
+  page: { minHeight: '100vh', background: 'transparent', color: 'hsl(var(--text-main))' },
+  center: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'transparent', color: 'hsl(var(--text-main))' },
   container: { maxWidth: 900, margin: '0 auto', padding: '30px 20px' },
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', height: 72 },
   userInfo: { display: 'flex', alignItems: 'center', gap: 10 },
@@ -324,12 +328,12 @@ const styles = {
     color: '#000000'
   },
   userName: { fontSize: 13.5, color: 'hsl(var(--text-muted))', fontWeight: '500' },
-  title: { fontSize: 24, fontWeight: '800', color: '#000000', fontFamily: 'var(--font-display)' },
+  title: { fontSize: 24, fontWeight: '800', color: 'hsl(var(--text-main))', fontFamily: 'var(--font-display)' },
   scoreCircle: { borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   analysisGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 },
   list: { listStyleType: 'none', paddingLeft: 0, margin: 0 },
   listItem: { padding: '6px 0', fontSize: 13.5, color: 'hsl(var(--text-muted))', lineHeight: '1.5' },
-  sectionTitle: { fontSize: 20, fontWeight: '800', color: '#000000', fontFamily: 'var(--font-display)' },
+  sectionTitle: { fontSize: 20, fontWeight: '800', color: 'hsl(var(--text-main))', fontFamily: 'var(--font-display)' },
   timeline: { display: 'flex', flexDirection: 'column', gap: 20 },
   questionHeader: { display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 },
   qText: { fontSize: 14, color: '#000000', lineHeight: '1.5', fontWeight: '600' },

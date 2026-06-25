@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { startInterview, submitAnswer, submitMcqAnswers } from '../lib/api';
 import useVoice from '../hooks/useVoice';
 import supabase from '../lib/supabase';
+import CosmicParallaxBg from '../components/CosmicParallaxBg';
 
 const ROLES = [
   { name: 'Frontend', icon: '🎨', desc: 'React, CSS layout, DOM structure, and web APIs' },
@@ -215,6 +216,7 @@ export default function Interview() {
   if (stage === 'select') {
     return (
       <div style={styles.center}>
+        <CosmicParallaxBg starsOnly={true} />
         <div style={styles.selectContainer}>
           <div style={{ marginBottom: 20 }}>
             <InterviewLogo text="INTERVIEW" size="large" />
@@ -261,16 +263,16 @@ export default function Interview() {
                   <button
                     onClick={() => setSelectedType('qa')}
                     className="cartoon-button"
-                    style={{ flex: 1, background: selectedType === 'qa' ? 'hsl(var(--primary))' : '#fff', color: selectedType === 'qa' ? '#fff' : '#000' }}
+                    style={{ flex: 1, background: selectedType === 'qa' ? 'hsl(var(--primary))' : 'hsl(var(--bg-card))', color: selectedType === 'qa' ? '#fff' : '#000' }}
                   >
-                    💬 Speak/Write
+                    💬 Speaking/Q&A
                   </button>
                   <button
                     onClick={() => setSelectedType('mcq')}
                     className="cartoon-button"
-                    style={{ flex: 1, background: selectedType === 'mcq' ? 'hsl(var(--primary))' : '#fff', color: selectedType === 'mcq' ? '#fff' : '#000' }}
+                    style={{ flex: 1, background: selectedType === 'mcq' ? 'hsl(var(--primary))' : 'hsl(var(--bg-card))', color: selectedType === 'mcq' ? '#fff' : '#000' }}
                   >
-                    📝 MCQ Exam
+                    🎯 MCQ Quiz
                   </button>
                 </div>
               </div>
@@ -281,14 +283,14 @@ export default function Interview() {
                   <button
                     onClick={() => setSelectedDifficulty('easy')}
                     className="cartoon-button"
-                    style={{ flex: 1, background: selectedDifficulty === 'easy' ? 'hsl(var(--warning))' : '#fff', color: '#000' }}
+                    style={{ flex: 1, background: selectedDifficulty === 'easy' ? 'hsl(var(--warning))' : 'hsl(var(--bg-card))', color: '#000' }}
                   >
                     🎈 Half Difficulty
                   </button>
                   <button
                     onClick={() => setSelectedDifficulty('medium')}
                     className="cartoon-button"
-                    style={{ flex: 1, background: selectedDifficulty === 'medium' ? 'hsl(var(--primary))' : '#fff', color: selectedDifficulty === 'medium' ? '#fff' : '#000' }}
+                    style={{ flex: 1, background: selectedDifficulty === 'medium' ? 'hsl(var(--primary))' : 'hsl(var(--bg-card))', color: selectedDifficulty === 'medium' ? '#fff' : '#000' }}
                   >
                     ⚙️ Standard Tech
                   </button>
@@ -347,6 +349,7 @@ export default function Interview() {
     const isMcq = selectedType === 'mcq';
     return (
       <div style={styles.center}>
+        <CosmicParallaxBg starsOnly={true} />
         <div style={{ ...styles.resultContainer, border: '3px solid #000000', background: 'hsl(var(--bg-card))', boxShadow: '8px 8px 0px #000' }} className="cartoon-card">
           <div style={{ marginBottom: 15 }}>
             <InterviewLogo text="INTERVIEW SCORECARD" size="large" />
@@ -444,12 +447,13 @@ export default function Interview() {
   // Render MCQ Exam Interface
   if (isMcqMode) {
     const currentQ = mcqQuestions[currentMcqIndex];
-    if (!currentQ) return <div style={styles.center}>Loading MCQ Questions...</div>;
+    if (!currentQ) return <div style={styles.center}><CosmicParallaxBg starsOnly={true} />Loading MCQ Questions...</div>;
 
     const selectedOption = mcqAnswers[currentQ.question_number];
 
     return (
       <div style={styles.chatWrapper}>
+        <CosmicParallaxBg starsOnly={true} />
         {/* Header */}
         <div style={{ ...styles.chatHeader, background: 'hsl(var(--bg-card))', borderBottom: '3px solid #000' }}>
           <div style={styles.chatHeaderLeft}>
@@ -554,6 +558,7 @@ export default function Interview() {
   // Render QA Voice/Text Interface
   return (
     <div style={styles.chatWrapper}>
+      <CosmicParallaxBg starsOnly={true} />
       {/* Header */}
       <div style={{ ...styles.chatHeader, background: 'hsl(var(--bg-card))', borderBottom: '3px solid #000' }}>
         <div style={styles.chatHeaderLeft}>
@@ -807,7 +812,8 @@ const styles = {
     justifyContent: 'center', 
     minHeight: '100vh', 
     padding: 24, 
-    color: '#000000' 
+    color: 'hsl(var(--text-main))',
+    background: 'transparent'
   },
   selectContainer: {
     maxWidth: 800,
@@ -918,7 +924,7 @@ const styles = {
     lineHeight: 1.4
   },
 
-  chatWrapper: { display: 'flex', flexDirection: 'column', height: '100vh', background: 'hsl(var(--bg-deep))', color: '#000000' },
+  chatWrapper: { display: 'flex', flexDirection: 'column', height: '100vh', background: 'transparent', color: 'hsl(var(--text-main))' },
   chatHeader: { 
     display: 'flex', 
     justifyContent: 'space-between', 
