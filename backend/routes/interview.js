@@ -4,6 +4,7 @@ import supabase from '../config/supabase.js';
 import authenticate from '../middleware/auth.js';
 import sanitizeInput from '../middleware/sanitize.js';
 import rateLimit from 'express-rate-limit';
+import multer from 'multer';
 
 const router = express.Router();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -148,6 +149,42 @@ const sendMessageWithRetry = async (chat, message, maxRetries = 3, delayMs = 150
     }
   }
 };
+
+// Multer configuration for memory storage (voice recordings)
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+});
+
+// ─── POST /api/interview/transcribe ───────────────────────────────────────────
+// Accepts an audio file from the client, base64 encodes it, and transcribes it with Gemini
+router.post('/transcribe', authenticate, upload.single('audio'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No audio file uploaded.' });
+  }
+
+  try {
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-3.1-flash-lite',
+    });
+
+    const audioPart = {
+      inlineData: {
+        data: req.file.buffer.toString('base64'),
+        mimeType: req.file.mimetype || 'audio/webm'
+      }
+    };
+
+    const prompt = 'Transcribe this voice recording accurately. Output ONLY the transcribed text, nothing else. Do not add metadata, formatting, notes, or explanations. If no speech is detected, return an empty string.';
+    const result = await model.generateContent([audioPart, prompt]);
+    const transcriptText = result.response.text().trim();
+
+    res.json({ transcript: transcriptText });
+  } catch (err) {
+    console.error('Transcription error:', err);
+    res.status(500).json({ error: 'Failed to transcribe audio' });
+  }
+});
 
 // ─── POST /api/interview/start ────────────────────────────────────────────────
 // Creates a new session and returns first question (QA) or all questions (MCQ)

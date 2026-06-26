@@ -40,6 +40,16 @@ export const submitAnswer = (session_id, answer, is_voice = false) =>
     body: JSON.stringify({ session_id, answer, is_voice }),
   });
 
+// Transcribe voice recording audio blob using backend Gemini transcription
+export const transcribeAudio = (audioBlob) => {
+  const formData = new FormData();
+  formData.append('audio', audioBlob, 'recording.webm');
+  return authFetch('/api/interview/transcribe', {
+    method: 'POST',
+    body: formData,
+  });
+};
+
 // Submit MCQ answers
 export const submitMcqAnswers = (session_id, answers) =>
   authFetch('/api/interview/submit-mcq', {

@@ -68,7 +68,7 @@ export default function Interview() {
   const {
     isListening, transcript, isSpeaking,
     startListening, stopListening, speak, stopSpeaking, setTranscript,
-    voiceError,
+    voiceError, isTranscribing,
   } = useVoice();
 
   useEffect(() => {
@@ -797,8 +797,9 @@ export default function Interview() {
                       color: '#fff',
                       whiteSpace: 'nowrap'
                     }}
+                    disabled={isTranscribing}
                   >
-                    {isListening ? '🔴 Stop Listening' : '🎤 Speak Now'}
+                    {isListening ? '🔴 Stop Listening' : isTranscribing ? '⏳ Transcribing...' : '🎤 Speak Now'}
                   </button>
                 ) : null}
 
@@ -824,18 +825,20 @@ export default function Interview() {
                     }
                   }}
                   placeholder={
-                    inputMode === 'voice'
-                      ? isListening ? 'Listening... Speak now!' : 'Click Speak, answer, then click Send.'
-                      : 'Type your answer... (Press Enter to send)'
+                    isTranscribing
+                      ? 'Transcribing your voice... 🎙️'
+                      : inputMode === 'voice'
+                        ? isListening ? 'Listening... Speak now!' : 'Click Speak, answer, then click Send.'
+                        : 'Type your answer... (Press Enter to send)'
                   }
                   className="cartoon-input"
                   style={{ flex: 1, height: 48, resize: 'none', lineHeight: '20px' }}
-                  disabled={isLoading || isListening}
+                  disabled={isLoading || isListening || isTranscribing}
                 />
 
                 <button
                   onClick={handleSubmitQA}
-                  disabled={!inputText.trim() || isLoading || isListening}
+                  disabled={!inputText.trim() || isLoading || isListening || isTranscribing}
                   className="cartoon-button cartoon-button-primary"
                   style={{ height: 48, padding: '0 20px' }}
                 >

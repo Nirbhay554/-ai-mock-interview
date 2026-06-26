@@ -1,78 +1,80 @@
 import { useState, useCallback, useRef } from 'react';
+import { transcribeAudio } from '../lib/api';
 
 const useVoice = () => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [voiceError, setVoiceError] = useState('');
-  const recognitionRef = useRef(null);
+  const [isTranscribing, setIsTranscribing] = useState(false);
 
-  // ── Speech to Text (STT) ──────────────────────────────────────────────────
-  const startListening = useCallback(() => {
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
 
-    if (!SpeechRecognition) {
-      alert('Your browser does not support voice input. Please use Chrome or Edge.');
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'en-US';
-    recognition.interimResults = true;   // show words as you speak
-    recognition.maxAlternatives = 1;
-    recognitionRef.current = recognition;
-
-    recognition.onstart = () => {
-      setIsListening(true);
+  // ── Speech to Text (STT) via local MediaRecorder and backend transcription ──
+  const startListening = useCallback(async () => {
+    try {
       setTranscript('');
       setVoiceError('');
-    };
+      audioChunksRef.current = [];
 
-    recognition.onresult = (event) => {
-      let interimTranscript = '';
-      let finalTranscript = '';
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
 
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const text = event.results[i][0].transcript;
-        if (event.results[i].isFinal) {
-          finalTranscript += text;
-        } else {
-          interimTranscript += text;
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
         }
-      }
+      };
 
-      setTranscript(finalTranscript || interimTranscript);
-    };
+      mediaRecorder.onstart = () => {
+        setIsListening(true);
+      };
 
-    recognition.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
-      setIsListening(false);
-      
-      let errMsg = 'Speech recognition error.';
-      if (event.error === 'not-allowed') {
-        errMsg = 'Microphone access denied. Please click the microphone/lock icon in your browser address bar and choose "Allow".';
-      } else if (event.error === 'no-speech') {
-        errMsg = 'No speech was detected. Speak louder or check your mic settings.';
-      } else if (event.error === 'network') {
-        errMsg = 'Network error. Speech recognition requires an active internet connection.';
+      mediaRecorder.onstop = async () => {
+        setIsListening(false);
+        
+        // Stop all tracks to release the mic hardware immediately
+        stream.getTracks().forEach(track => track.stop());
+
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        if (audioBlob.size === 0) return;
+
+        setIsTranscribing(true);
+        setVoiceError('');
+
+        try {
+          const data = await transcribeAudio(audioBlob);
+
+          if (data.transcript) {
+            setTranscript(data.transcript);
+          } else {
+            setVoiceError('No speech detected. Please speak clearly or try typing.');
+          }
+        } catch (err) {
+          console.error('Audio transcription error:', err);
+          setVoiceError(err.message || 'Failed to connect to transcription server.');
+        } finally {
+          setIsTranscribing(false);
+        }
+      };
+
+      mediaRecorder.start();
+    } catch (err) {
+      console.error('Mic access error:', err);
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        setVoiceError('Microphone access denied. Please click the lock/settings icon in your browser address bar and choose "Allow".');
       } else {
-        errMsg = `Speech recognition failed: ${event.error}`;
+        setVoiceError('Failed to access microphone. Please check your mic settings.');
       }
-      setVoiceError(errMsg);
-    };
-
-    recognition.onend = () => {
       setIsListening(false);
-    };
-
-    recognition.start();
+    }
   }, []);
 
   const stopListening = useCallback(() => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      setIsListening(false);
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
     }
   }, []);
 
@@ -116,6 +118,7 @@ const useVoice = () => {
     stopSpeaking,
     setTranscript,
     voiceError,
+    isTranscribing
   };
 };
 
