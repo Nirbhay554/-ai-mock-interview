@@ -97,6 +97,18 @@ export default function Interview() {
     }
   }, [voiceError]);
 
+  // Clear speech/voice error automatically when switching to text input mode
+  useEffect(() => {
+    if (inputMode === 'text') {
+      setError((prev) => {
+        if (prev && (prev.includes('Speech recognition') || prev.includes('Microphone') || prev.includes('mic settings'))) {
+          return '';
+        }
+        return prev;
+      });
+    }
+  }, [inputMode]);
+
   const addMessage = (role, content, meta = {}) => {
     setMessages((prev) => [...prev, { role, content, ...meta }]);
   };
@@ -722,8 +734,26 @@ export default function Interview() {
           </div>
 
           {error && (
-            <div style={styles.errorBanner}>
-              <span>⚠️ {error}</span>
+            <div style={{ ...styles.errorBanner, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+              <span style={{ flex: 1, textAlign: 'center' }}>⚠️ {error}</span>
+              <button 
+                onClick={() => setError('')} 
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  cursor: 'pointer', 
+                  fontWeight: 'bold', 
+                  color: 'hsl(var(--danger))', 
+                  fontSize: 16,
+                  padding: '4px 8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontFamily: 'sans-serif'
+                }}
+                aria-label="Dismiss error"
+              >
+                ✕
+              </button>
             </div>
           )}
 
