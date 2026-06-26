@@ -19,11 +19,16 @@ router.use(limiter);
 
 // Helper to clean markdown formatting, parse multiple JSON blocks and merge them robustly
 const cleanJSONResponse = (text) => {
-  // If it contains a JSON array (useful for MCQs / Aptitude)
-  const arrayStart = text.indexOf('[');
-  const arrayEnd = text.lastIndexOf(']');
-  if (arrayStart !== -1 && arrayEnd !== -1 && arrayEnd > arrayStart) {
-    return text.substring(arrayStart, arrayEnd + 1);
+  const firstObject = text.indexOf('{');
+  const firstArray = text.indexOf('[');
+
+  // If there is an array and it starts before any object, or there are no objects at all,
+  // then we treat the response as a JSON array.
+  if (firstArray !== -1 && (firstObject === -1 || firstArray < firstObject)) {
+    const arrayEnd = text.lastIndexOf(']');
+    if (arrayEnd !== -1 && arrayEnd > firstArray) {
+      return text.substring(firstArray, arrayEnd + 1);
+    }
   }
 
   const objects = [];

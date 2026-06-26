@@ -8,13 +8,17 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Helper to clean and parse JSON response
 const cleanJSONResponse = (text) => {
-  const start = text.indexOf('[');
-  const end = text.lastIndexOf(']');
-  if (start !== -1 && end !== -1 && end > start) {
-    try {
-      return JSON.parse(text.substring(start, end + 1));
-    } catch (e) {
-      console.error('JSON parsing error on cleaned array text:', e);
+  const firstObject = text.indexOf('{');
+  const firstArray = text.indexOf('[');
+
+  if (firstArray !== -1 && (firstObject === -1 || firstArray < firstObject)) {
+    const arrayEnd = text.lastIndexOf(']');
+    if (arrayEnd !== -1 && arrayEnd > firstArray) {
+      try {
+        return JSON.parse(text.substring(firstArray, arrayEnd + 1));
+      } catch (e) {
+        console.error('JSON parsing error on cleaned array text:', e);
+      }
     }
   }
   
