@@ -417,6 +417,10 @@ router.post('/answer', authenticate, sanitizeInput, async (req, res) => {
 
     const chat = model.startChat({ history: chatHistory });
 
+    const askedQuestions = history
+      ? history.filter((msg) => msg.role === 'agent' && msg.content).map((msg) => msg.content)
+      : [];
+
     let prompt = answer;
     if (questionCount >= totalQuestions) {
       prompt = `
@@ -431,6 +435,12 @@ The interview is now complete. Evaluate this final answer, and return the final 
   "summary": "2-3 sentence overall assessment of the candidate"
 }
 Output ONLY valid JSON.
+      `.trim();
+    } else {
+      prompt = `
+Candidate's answer: "${answer}"
+
+${askedQuestions.length > 0 ? `To ensure variety, here are the questions you have ALREADY asked in this session:\n${askedQuestions.map((q, idx) => `${idx + 1}. "${q}"`).join('\n')}\n\nYou MUST NOT repeat any of these questions. Ask a completely different question next.` : ''}
       `.trim();
     }
 
